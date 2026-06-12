@@ -1,0 +1,27 @@
+name: First Interaction
+description: Welcome new contributors when they open their first issue or pull request.
+author: Tom de Wildt
+
+branding:
+  icon: message-circle
+  color: blue
+
+inputs:
+  repo-token:
+    description: "Token with `issues: write` and `pull-requests: write` permissions."
+    required: false
+    default: ${{ github.token }}
+  issue-message:
+    description: Comment to post on an individual's first issue.
+    required: false
+    default: |-
+      Thanks for opening your first issue here! A maintainer will take a look as soon as possible. In the meantime, double-check that the issue follows the template, it makes triage much faster.
+  pr-message:
+    description: Comment to post on an individual's first pull request.
+    required: false
+    default: |-
+      Thanks for your first pull request! A maintainer will review it as soon as possible. Make sure CI is green and the PR description explains the change and links any related issue.
+
+runs:
+  using: node24
+  main: dist/index.js
