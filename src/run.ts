@@ -1,16 +1,15 @@
 import * as core from "@actions/core";
 import * as github from "@actions/github";
-import { postWelcome } from "./client.js";
+import { postWelcomeMessage } from "./client.js";
 import { isFirstIssue, isFirstPullRequest } from "./evaluate.js";
 import { createGitHubClient } from "./github.js";
-
-const MARKER = "<!-- first-interaction -->";
 
 export async function run(): Promise<void> {
   try {
     const token = core.getInput("repo-token", { required: true });
     const issueMessage = core.getInput("issue-message");
     const prMessage = core.getInput("pr-message");
+    const marker = core.getInput("marker");
 
     const { context } = github;
     const item = context.payload.issue ?? context.payload.pull_request;
@@ -39,8 +38,8 @@ export async function run(): Promise<void> {
     const client = createGitHubClient(octokit, owner, repo);
 
     if (isPR) {
-      const pullRequests = await client.listPullRequests();
-      if (!isFirstPullRequest(pullRequests, login, issueNumber)) {
+      const pullRequests = await client.listPullRequests(login);
+      if (!isFirstPullRequest(pullRequests, issueNumber)) {
         core.info(`Not @${login}'s first pull request; skipping.`);
         return;
       }
@@ -52,7 +51,7 @@ export async function run(): Promise<void> {
       }
     }
 
-    await postWelcome(client, issueNumber, MARKER, message);
+    await postWelcomeMessage(client, issueNumber, message, marker);
     core.info(`Posted welcome on ${isPR ? "PR" : "issue"} #${issueNumber} for @${login}.`);
   } catch (error) {
     if (error instanceof Error) {

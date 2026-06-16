@@ -17,13 +17,12 @@ export function createGitHubClient(
       });
     },
 
-    async listPullRequests() {
-      return octokit.paginate(octokit.rest.pulls.list, {
-        owner,
-        repo,
-        state: "all",
+    async listPullRequests(creator) {
+      const { data } = await octokit.rest.search.issuesAndPullRequests({
+        q: `type:pr repo:${owner}/${repo} author:${creator}`,
         per_page: 100,
       });
+      return data.items;
     },
 
     async listComments(number) {

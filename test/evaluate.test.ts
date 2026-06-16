@@ -36,40 +36,19 @@ describe("isFirstIssue", () => {
 });
 
 describe("isFirstPullRequest", () => {
-  test("returns true when no previous pull requests by the user exist", () => {
-    expect(isFirstPullRequest([], "octocat", 10)).toBe(true);
+  test("returns true when no previous pull requests exist", () => {
+    expect(isFirstPullRequest([], 10)).toBe(true);
   });
 
-  test("returns false when a previous pull request by the user exists", () => {
-    expect(isFirstPullRequest([{ number: 5, user: { login: "octocat" } }], "octocat", 10)).toBe(
-      false,
-    );
-  });
-
-  test("excludes pull requests by other users", () => {
-    expect(isFirstPullRequest([{ number: 5, user: { login: "other" } }], "octocat", 10)).toBe(true);
+  test("returns false when a previous pull request exists", () => {
+    expect(isFirstPullRequest([{ number: 5 }], 10)).toBe(false);
   });
 
   test("returns true when only pull requests with higher numbers exist", () => {
-    expect(isFirstPullRequest([{ number: 11, user: { login: "octocat" } }], "octocat", 10)).toBe(
-      true,
-    );
+    expect(isFirstPullRequest([{ number: 11 }], 10)).toBe(true);
   });
 
-  test("treats null user as a different user", () => {
-    expect(isFirstPullRequest([{ number: 5, user: null }], "octocat", 10)).toBe(true);
-  });
-
-  test("returns false when mix of users includes a previous pull request by the user", () => {
-    expect(
-      isFirstPullRequest(
-        [
-          { number: 1, user: { login: "other" } },
-          { number: 5, user: { login: "octocat" } },
-        ],
-        "octocat",
-        10,
-      ),
-    ).toBe(false);
+  test("returns false when mix includes a previous pull request", () => {
+    expect(isFirstPullRequest([{ number: 1 }, { number: 11 }], 10)).toBe(false);
   });
 });
