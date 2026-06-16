@@ -21,6 +21,10 @@ inputs:
     required: false
     default: |-
       Thanks for your first pull request! A maintainer will review it as soon as possible. Make sure CI is green and the PR description explains the change and links any related issue.
+  marker:
+    description: HTML comment used to dedupe re-runs on retrigger or replay events.
+    required: false
+    default: <!-- first-interaction -->
 
 runs:
   using: node24
