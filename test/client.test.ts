@@ -5,15 +5,13 @@ class FakeGitHubClient implements GitHubClient {
   createdComments: Array<{ issueNumber: number; body: string }> = [];
   existingComments: Array<{ body?: string | null }> = [];
   issues: Array<{ number: number; pull_request?: unknown }> = [];
-  pullRequests: Array<{ number: number; user: { login: string } | null }> = [];
+  pullRequests: Array<{ number: number }> = [];
 
   async listIssues(): Promise<ReadonlyArray<{ number: number; pull_request?: unknown }>> {
     return this.issues;
   }
 
-  async listPullRequests(): Promise<
-    ReadonlyArray<{ number: number; user: { login: string } | null }>
-  > {
+  async listPullRequests(): Promise<ReadonlyArray<{ number: number }>> {
     return this.pullRequests;
   }
 
