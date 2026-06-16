@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { postWelcome, type GitHubClient } from "../src/client.js";
+import { postWelcomeMessage, type GitHubClient } from "../src/client.js";
 
 class FakeGitHubClient implements GitHubClient {
   createdComments: Array<{ issueNumber: number; body: string }> = [];
@@ -24,7 +24,7 @@ class FakeGitHubClient implements GitHubClient {
   }
 }
 
-describe("postWelcome", () => {
+describe("postWelcomeMessage", () => {
   let client: FakeGitHubClient;
   const marker = "<!-- first-interaction -->";
   const message = "Welcome to the project!";
@@ -34,7 +34,7 @@ describe("postWelcome", () => {
   });
 
   test("posts comment with marker prefix", async () => {
-    await postWelcome(client, 42, marker, message);
+    await postWelcomeMessage(client, 42, message, marker);
 
     expect(client.createdComments).toEqual([{ issueNumber: 42, body: `${marker}\n${message}` }]);
   });
@@ -42,7 +42,7 @@ describe("postWelcome", () => {
   test("skips comment when an existing comment already contains the marker", async () => {
     client.existingComments = [{ body: `${marker}\nold message` }];
 
-    await postWelcome(client, 42, marker, message);
+    await postWelcomeMessage(client, 42, message, marker);
 
     expect(client.createdComments).toEqual([]);
   });
@@ -54,7 +54,7 @@ describe("postWelcome", () => {
       { body: undefined },
     ];
 
-    await postWelcome(client, 42, marker, message);
+    await postWelcomeMessage(client, 42, message, marker);
 
     expect(client.createdComments).toEqual([{ issueNumber: 42, body: `${marker}\n${message}` }]);
   });
